@@ -125,6 +125,8 @@ def update_graph(model, kval):
 import os
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8050))  # Use Render's assigned port
+    import os
+    port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port)
+
 
