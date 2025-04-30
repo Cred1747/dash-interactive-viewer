@@ -125,8 +125,7 @@ def update_graph(model, kval):
 import os
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", 10000))  # 👈 Render will detect this
     app.run_server(host="0.0.0.0", port=port)
-
 
 
