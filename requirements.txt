@@ -1,4 +1,4 @@
-dash
-plotly
-pandas
-gdown
+dash==2.16.1
+pandas==2.2.1
+plotly==5.20.0
+gdown==5.1.0
