@@ -5,36 +5,32 @@ import ast
 import plotly.express as px
 from dash import Dash, dcc, html, Input, Output
 
-# === Google Drive File ID for ZIP ===
+# === Google Drive ZIP File ID ===
 ZIP_FILE_ID = "1xHaKgAi26LOBu_9lDEpQwECzkslh_utH"
+ZIP_URL = f"https://drive.google.com/uc?id={ZIP_FILE_ID}"
 
-# === Local working paths ===
+# === Local Paths ===
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(WORKING_DIR, "data")
 ZIP_PATH = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted.zip")
+EXTRACTED_DIR = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted")
 
-# === Download ZIP from Google Drive ===
-def download_file(file_id, output_path):
-    import gdown
-    if not os.path.exists(output_path):
-        print(f"⬇️ Downloading {output_path}...")
-        url = f"https://drive.google.com/uc?id={file_id}"
-        gdown.download(url, output_path, quiet=False)
-
-# Ensure data folder exists
+# === Ensure Data Directory Exists ===
 os.makedirs(DATA_DIR, exist_ok=True)
 
-# Download and extract
-download_file(ZIP_FILE_ID, ZIP_PATH)
+# === Download ZIP if Missing ===
+if not os.path.exists(ZIP_PATH):
+    import gdown
+    print("⬇️ Downloading ZIP from Google Drive...")
+    gdown.download(ZIP_URL, ZIP_PATH, quiet=False)
 
-# Extract ZIP and find folder
-# Extract ZIP directly to DATA_DIR
-with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
-    zip_ref.extractall(DATA_DIR)
+# === Extract ZIP if Needed ===
+if not os.path.exists(EXTRACTED_DIR):
+    print("📦 Extracting ZIP...")
+    with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
+        zip_ref.extractall(EXTRACTED_DIR)
 
-EXTRACTED_DIR = DATA_DIR  # Assume all files are now inside /data
-
-# === Index document and label files ===
+# === Index Files ===
 doc_files, label_files = [], []
 for root, _, files in os.walk(EXTRACTED_DIR):
     for f in files:
@@ -59,7 +55,7 @@ for doc in doc_files:
 models = sorted(set(k[0] for k in index))
 kvals = sorted(set(k[1] for k in index), key=int)
 
-# === Dash app ===
+# === Dash App ===
 app = Dash(__name__)
 app.layout = html.Div([
     html.H2("Interactive Topic Proportions"),
@@ -112,8 +108,8 @@ def update_graph(model, kval):
     )
     return fig
 
+# === Run App ===
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run_server(host="0.0.0.0", port=port)
-
 
