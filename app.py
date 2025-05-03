@@ -1,5 +1,4 @@
 import os
-import zipfile
 import pandas as pd
 import ast
 import plotly.express as px
@@ -7,28 +6,15 @@ from dash import Dash, dcc, html, Input, Output
 
 # === Local paths ===
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(WORKING_DIR, "data")
-ZIP_PATH = os.path.join(DATA_DIR, "UHC.zip")
-EXTRACTED_DIR = DATA_DIR  # <– Since files are directly inside the ZIP
+DATA_DIR = os.path.join(WORKING_DIR, "data", "Bert_4.1Mini_Extracted")
 
-# === Ensure data folder exists
-os.makedirs(DATA_DIR, exist_ok=True)
-
-# === Extract ZIP if not already extracted
-if not any(f.endswith(".csv") for f in os.listdir(DATA_DIR)):
-    print("📦 Extracting ZIP...")
-    with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
-        zip_ref.extractall(DATA_DIR)
-
-# === Extract ZIP if not extracted ===
-if not os.path.exists(EXTRACTED_DIR):
-    print("📦 Extracting ZIP...")
-    with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
-        zip_ref.extractall(EXTRACTED_DIR)
+# === Validate folder exists ===
+if not os.path.exists(DATA_DIR):
+    raise FileNotFoundError("❌ Folder not found: /data/Bert_4.1Mini_Extracted")
 
 # === Index files ===
 doc_files, label_files = [], []
-for root, _, files in os.walk(EXTRACTED_DIR):
+for root, _, files in os.walk(DATA_DIR):
     for f in files:
         full = os.path.join(root, f)
         if "document_info" in f:
@@ -107,4 +93,5 @@ def update_graph(model, kval):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run_server(host="0.0.0.0", port=port)
+
 
