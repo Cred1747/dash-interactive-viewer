@@ -6,7 +6,7 @@ from dash import Dash, dcc, html, Input, Output
 
 # === Local paths ===
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(WORKING_DIR, "data", "Bert_4.1Mini_Extracted")
+DATA_DIR = os.path.join(WORKING_DIR, "data")
 
 # === Validate folder exists ===
 if not os.path.exists(DATA_DIR):
