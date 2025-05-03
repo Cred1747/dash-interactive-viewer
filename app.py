@@ -1,4 +1,5 @@
 import os
+import re
 import pandas as pd
 import ast
 import plotly.express as px
@@ -16,6 +17,8 @@ if not os.path.exists(DATA_DIR):
 doc_files, label_files = [], []
 for root, _, files in os.walk(DATA_DIR):
     for f in files:
+        if not f.endswith(".csv"):
+            continue
         full = os.path.join(root, f)
         if "document_info" in f:
             doc_files.append(full)
@@ -25,9 +28,29 @@ for root, _, files in os.walk(DATA_DIR):
 index = {}
 for doc in doc_files:
     base = os.path.basename(doc)
-    polarity = "positive" if "positive" in base else "negative" if "negative" in base else None
-    model = "UHC" if "UHC" in base else "LM" if "LM" in base else "BT" if "Brian" in base else None
-    k_match = base.split("k=")[-1].replace("mini.csv", "").replace(".csv", "") if "k=" in base else None
+
+    # Extract polarity
+    polarity = None
+    if "positive" in base:
+        polarity = "positive"
+    elif "negative" in base:
+        polarity = "negative"
+
+    # Extract model
+    model = None
+    if "UHC" in base:
+        model = "UHC"
+    elif "LM" in base:
+        model = "LM"
+    elif "BT" in base:
+        model = "BT"
+
+    # Extract k-value using regex
+    k_search = re.search(r'k=(\d+)', base)
+    k_match = k_search.group(1) if k_search else None
+
+    print(f"Parsing: {base} → polarity={polarity}, model={model}, k={k_match}")
+
     if polarity and model and k_match:
         model_id = f"{polarity}{model}"
         label = next((l for l in label_files if polarity in l and model in l and f"k={k_match}" in l), None)
