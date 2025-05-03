@@ -28,17 +28,11 @@ os.makedirs(DATA_DIR, exist_ok=True)
 download_file(ZIP_FILE_ID, ZIP_PATH)
 
 # Extract ZIP and find folder
-EXTRACTED_DIR = None
+# Extract ZIP directly to DATA_DIR
 with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
     zip_ref.extractall(DATA_DIR)
-    for name in zip_ref.namelist():
-        top_folder = name.split('/')[0]
-        if "Bert_4.1Mini_Extracted" in top_folder:
-            EXTRACTED_DIR = os.path.join(DATA_DIR, top_folder)
-            break
 
-if not EXTRACTED_DIR or not os.path.exists(EXTRACTED_DIR):
-    raise FileNotFoundError("❌ Could not find extracted ZIP folder matching 'Bert_4.1Mini_Extracted*'")
+EXTRACTED_DIR = DATA_DIR  # Assume all files are now inside /data
 
 # === Index document and label files ===
 doc_files, label_files = [], []
