@@ -11,48 +11,12 @@ ZIP_FILE_ID = "1xHaKgAi26LOBu_9lDEpQwECzkslh_utH"  # ← Update this after uploa
 # === Local working paths ===
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(WORKING_DIR, "data")
-ZIP_PATH = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted.zip")
+EXTRACTED_DIR = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted")
 
-# Ensure the data directory exists
-os.makedirs(DATA_DIR, exist_ok=True)
-
-# Extract the ZIP if it hasn't been extracted yet
-with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
-    zip_ref.extractall(DATA_DIR)
-
-# Dynamically find the extracted folder
-EXTRACTED_DIR = None
-for root, dirs, _ in os.walk(DATA_DIR):
-    for d in dirs:
-        if "Bert_4.1Mini_Extracted" in d:
-            EXTRACTED_DIR = os.path.join(root, d)
-            break
-    if EXTRACTED_DIR:
-        break
-
-if not EXTRACTED_DIR or not os.path.exists(EXTRACTED_DIR):
-    raise FileNotFoundError("❌ Could not find extracted ZIP folder matching 'Bert_4.1Mini_Extracted*'")
-
-
-# === Download utility ===
-def download_file(file_id, output_path):
-    import gdown
-    if not os.path.exists(output_path):
-        print(f"⬇️ Downloading {output_path}...")
-        url = f"https://drive.google.com/uc?id={file_id}"
-        gdown.download(url, output_path, quiet=False)
-
-# === Ensure data directory exists ===
-os.makedirs(DATA_DIR, exist_ok=True)
-
-# === Download files if missing ===
-download_file(ZIP_FILE_ID, ZIP_PATH)
-
-# === Unzip if needed ===
+# Ensure the extracted folder exists
 if not os.path.exists(EXTRACTED_DIR):
-    print("📦 Extracting ZIP...")
-    with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
-        zip_ref.extractall(EXTRACTED_DIR)
+    raise FileNotFoundError("❌ 'Bert_4.1Mini_Extracted' folder not found in /data.")
+    
 
 # === Index document and label files ===
 doc_files, label_files = [], []
