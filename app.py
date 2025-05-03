@@ -74,9 +74,6 @@ app.layout = html.Div([
     html.H4("Tweets for Selected Topic & Date"),
     html.Div(id='tweet-output', style={"whiteSpace": "pre-wrap", "maxHeight": "400px", "overflowY": "scroll", "border": "1px solid #ccc", "padding": "10px"})
 ])
-,
-    dcc.Graph(id='topic-graph')
-])
 
 from dash.dependencies import Input, Output
 import itertools
