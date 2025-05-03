@@ -5,18 +5,40 @@ import ast
 import plotly.express as px
 from dash import Dash, dcc, html, Input, Output
 
-# === Google Drive File IDs ===
-ZIP_FILE_ID = "1xHaKgAi26LOBu_9lDEpQwECzkslh_utH"  # ← Update this after uploading ZIP
+# === Google Drive File ID for ZIP ===
+ZIP_FILE_ID = "1xHaKgAi26LOBu_9lDEpQwECzkslh_utH"
 
 # === Local working paths ===
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(WORKING_DIR, "data")
-EXTRACTED_DIR = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted")
+ZIP_PATH = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted.zip")
 
-# Ensure the extracted folder exists
-if not os.path.exists(EXTRACTED_DIR):
-    raise FileNotFoundError("❌ 'Bert_4.1Mini_Extracted' folder not found in /data.")
-    
+# === Download ZIP from Google Drive ===
+def download_file(file_id, output_path):
+    import gdown
+    if not os.path.exists(output_path):
+        print(f"⬇️ Downloading {output_path}...")
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, output_path, quiet=False)
+
+# Ensure data folder exists
+os.makedirs(DATA_DIR, exist_ok=True)
+
+# Download and extract
+download_file(ZIP_FILE_ID, ZIP_PATH)
+
+# Extract ZIP and find folder
+EXTRACTED_DIR = None
+with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
+    zip_ref.extractall(DATA_DIR)
+    for name in zip_ref.namelist():
+        top_folder = name.split('/')[0]
+        if "Bert_4.1Mini_Extracted" in top_folder:
+            EXTRACTED_DIR = os.path.join(DATA_DIR, top_folder)
+            break
+
+if not EXTRACTED_DIR or not os.path.exists(EXTRACTED_DIR):
+    raise FileNotFoundError("❌ Could not find extracted ZIP folder matching 'Bert_4.1Mini_Extracted*'")
 
 # === Index document and label files ===
 doc_files, label_files = [], []
@@ -26,7 +48,6 @@ for root, _, files in os.walk(EXTRACTED_DIR):
         if "document_info" in f:
             doc_files.append(full)
         elif "topic_representation" in f:
-
             label_files.append(full)
 
 index = {}
@@ -72,10 +93,8 @@ def update_graph(model, kval):
 
     df['Date'] = pd.to_datetime(df['Date'], errors='coerce').dt.date
     df.dropna(subset=['Date', 'Topic'], inplace=True)
-    merged = df.copy()
 
-
-    grouped = merged.groupby(['Date', 'Topic']).size().reset_index(name='Count')
+    grouped = df.groupby(['Date', 'Topic']).size().reset_index(name='Count')
     totals = grouped.groupby('Date')['Count'].sum().reset_index(name='Total')
     grouped = pd.merge(grouped, totals, on='Date')
     grouped['Proportion'] = grouped['Count'] / grouped['Total']
@@ -99,10 +118,8 @@ def update_graph(model, kval):
     )
     return fig
 
-import os
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  # 👈 Render will detect this
+    port = int(os.environ.get("PORT", 10000))
     app.run_server(host="0.0.0.0", port=port)
 
 
