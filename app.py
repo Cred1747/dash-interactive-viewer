@@ -144,7 +144,7 @@ def update_graph(model, kval, clickData):
                 (df['Date'] == clicked_date) & (df['Topic'] == topic)
             ][tweet_col].dropna().tolist()
             if tweets:
-                return fig, f"📅 {clicked_date} — Topic {topic} — {label_name}\n\n" + "\n\n".join(tweets[:20])
+                return fig, f"📅 {clicked_date} — Topic {topic} — {label_name}\n\n" + "\n\n".join(tweets)
             else:
                 return fig, f"No tweets found for {label_name} on {clicked_date}."
         else:
