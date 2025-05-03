@@ -101,16 +101,30 @@ def update_graph(model, kval):
     grouped['Topic_Label'] = grouped['Topic'].map(label_map)
     grouped['DateTime'] = pd.to_datetime(grouped['Date'])
 
-    fig = px.bar(
-        grouped,
-        x='DateTime',
-        y='Proportion',
-        color='Topic_Label',
-        title=f"{model}, k={kval}",
-        labels={'Proportion': 'Topic Proportion'},
-        barmode='stack',
-        template='plotly_white'
-    )
+    import plotly.colors
+
+unique_labels = grouped['Topic_Label'].unique()
+color_sequence = plotly.colors.qualitative.Alphabet  # or Safe, Vivid, Set3, etc.
+
+# If you have more topics than colors in the chosen palette, expand the list
+if len(unique_labels) > len(color_sequence):
+    import itertools
+    extended_colors = list(itertools.islice(itertools.cycle(color_sequence), len(unique_labels)))
+else:
+    extended_colors = color_sequence[:len(unique_labels)]
+
+fig = px.bar(
+    grouped,
+    x='DateTime',
+    y='Proportion',
+    color='Topic_Label',
+    title=f"{model}, k={kval}",
+    labels={'Proportion': 'Topic Proportion'},
+    barmode='stack',
+    template='plotly_white',
+    color_discrete_sequence=extended_colors
+)
+
     return fig
 
 if __name__ == "__main__":
