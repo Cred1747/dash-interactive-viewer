@@ -8,7 +8,7 @@ from dash import Dash, dcc, html, Input, Output
 # === Local paths ===
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(WORKING_DIR, "data")
-ZIP_PATH = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted.zip")
+ZIP_PATH = os.path.join(DATA_DIR, "UHC.zip")
 EXTRACTED_DIR = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted")
 
 # === Ensure data folder exists ===
