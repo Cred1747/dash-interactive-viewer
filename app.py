@@ -10,7 +10,7 @@ DATA_DIR = os.path.join(WORKING_DIR, "data")
 
 # === Validate folder exists ===
 if not os.path.exists(DATA_DIR):
-    raise FileNotFoundError("❌ Folder not found: /data/Bert_4.1Mini_Extracted")
+    raise FileNotFoundError(f"❌ Folder not found: {DATA_DIR}")
 
 # === Index files ===
 doc_files, label_files = [], []
