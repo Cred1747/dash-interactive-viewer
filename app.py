@@ -70,18 +70,28 @@ app.layout = html.Div([
         html.Label("k-value:"),
         dcc.Dropdown(id='kval', options=[{"label": k, "value": k} for k in kvals], value=kvals[0] if kvals else None)
     ]),
+    dcc.Graph(id='topic-graph'),
+    html.H4("Tweets for Selected Topic & Date"),
+    html.Div(id='tweet-output', style={"whiteSpace": "pre-wrap", "maxHeight": "400px", "overflowY": "scroll", "border": "1px solid #ccc", "padding": "10px"})
+])
+,
     dcc.Graph(id='topic-graph')
 ])
 
+from dash.dependencies import Input, Output
+import itertools
+
 @app.callback(
     Output('topic-graph', 'figure'),
+    Output('tweet-output', 'children'),
     Input('model', 'value'),
-    Input('kval', 'value')
+    Input('kval', 'value'),
+    Input('topic-graph', 'clickData')
 )
-def update_graph(model, kval):
+def update_graph(model, kval, clickData):
     pair = (model, kval)
     if pair not in index:
-        return px.bar(title="No data found.")
+        return px.bar(title="No data found."), "No tweets to display."
 
     df = pd.read_csv(index[pair]["doc"])
     labels_df = pd.read_csv(index[pair]["label"])
@@ -101,16 +111,13 @@ def update_graph(model, kval):
     grouped['Topic_Label'] = grouped['Topic'].map(label_map)
     grouped['DateTime'] = pd.to_datetime(grouped['Date'])
 
-    import plotly.colors
     unique_labels = grouped['Topic_Label'].unique()
+    import plotly.colors
     color_sequence = plotly.colors.qualitative.Alphabet
-
-    # Extend color palette if needed
-    if len(unique_labels) > len(color_sequence):
-        import itertools
-        extended_colors = list(itertools.islice(itertools.cycle(color_sequence), len(unique_labels)))
-    else:
-        extended_colors = color_sequence[:len(unique_labels)]
+    extended_colors = (
+        list(itertools.islice(itertools.cycle(color_sequence), len(unique_labels)))
+        if len(unique_labels) > len(color_sequence) else color_sequence[:len(unique_labels)]
+    )
 
     fig = px.bar(
         grouped,
@@ -124,7 +131,30 @@ def update_graph(model, kval):
         color_discrete_sequence=extended_colors
     )
 
-    return fig
+    # === Extract clicked info and show tweets ===
+    if clickData:
+        clicked_date = pd.to_datetime(clickData['points'][0]['x']).date()
+        clicked_label = clickData['points'][0]['curveNumber']
+        label_name = grouped['Topic_Label'].unique()[clicked_label]
+        matched_topic = grouped[
+            (grouped['Date'] == clicked_date) & (grouped['Topic_Label'] == label_name)
+        ]['Topic'].values
+
+        if matched_topic.size > 0:
+            topic = matched_topic[0]
+            tweet_col = 'original_text' if 'original_text' in df.columns else 'Document'
+            tweets = df[
+                (df['Date'] == clicked_date) & (df['Topic'] == topic)
+            ][tweet_col].dropna().tolist()
+            if tweets:
+                return fig, f"📅 {clicked_date} — Topic {topic} — {label_name}\n\n" + "\n\n".join(tweets[:20])
+            else:
+                return fig, f"No tweets found for {label_name} on {clicked_date}."
+        else:
+            return fig, "No matching topic found for selected bar."
+
+    return fig, "Click a bar to see tweets for that topic and date."
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
