@@ -13,13 +13,23 @@ WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(WORKING_DIR, "data")
 ZIP_PATH = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted.zip")
 
+# Ensure the data directory exists
 os.makedirs(DATA_DIR, exist_ok=True)
 
+# Extract the ZIP if it hasn't been extracted yet
+with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
+    zip_ref.extractall(DATA_DIR)
+
+# Dynamically find the extracted folder
 EXTRACTED_DIR = None
-for d in os.listdir(DATA_DIR):
-    if d.startswith("Bert_4.1Mini_Extracted"):
-        EXTRACTED_DIR = os.path.join(DATA_DIR, d)
+for root, dirs, _ in os.walk(DATA_DIR):
+    for d in dirs:
+        if "Bert_4.1Mini_Extracted" in d:
+            EXTRACTED_DIR = os.path.join(root, d)
+            break
+    if EXTRACTED_DIR:
         break
+
 if not EXTRACTED_DIR or not os.path.exists(EXTRACTED_DIR):
     raise FileNotFoundError("❌ Could not find extracted ZIP folder matching 'Bert_4.1Mini_Extracted*'")
 
