@@ -12,6 +12,9 @@ ZIP_FILE_ID = "1xHaKgAi26LOBu_9lDEpQwECzkslh_utH"  # ← Update this after uploa
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(WORKING_DIR, "data")
 ZIP_PATH = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted.zip")
+
+os.makedirs(DATA_DIR, exist_ok=True)
+
 EXTRACTED_DIR = None
 for d in os.listdir(DATA_DIR):
     if d.startswith("Bert_4.1Mini_Extracted"):
