@@ -9,10 +9,16 @@ from dash import Dash, dcc, html, Input, Output
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(WORKING_DIR, "data")
 ZIP_PATH = os.path.join(DATA_DIR, "UHC.zip")
-EXTRACTED_DIR = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted")
+EXTRACTED_DIR = DATA_DIR  # <– Since files are directly inside the ZIP
 
-# === Ensure data folder exists ===
+# === Ensure data folder exists
 os.makedirs(DATA_DIR, exist_ok=True)
+
+# === Extract ZIP if not already extracted
+if not any(f.endswith(".csv") for f in os.listdir(DATA_DIR)):
+    print("📦 Extracting ZIP...")
+    with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
+        zip_ref.extractall(DATA_DIR)
 
 # === Extract ZIP if not extracted ===
 if not os.path.exists(EXTRACTED_DIR):
