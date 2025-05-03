@@ -41,7 +41,8 @@ for root, _, files in os.walk(EXTRACTED_DIR):
         full = os.path.join(root, f)
         if "document_info" in f:
             doc_files.append(full)
-        elif "topic-representation" in f or "repersentation" in f:
+        elif "topic_representation" in f:
+
             label_files.append(full)
 
 index = {}
