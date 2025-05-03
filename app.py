@@ -6,13 +6,11 @@ import plotly.express as px
 from dash import Dash, dcc, html, Input, Output
 
 # === Google Drive File IDs ===
-CSV_FILE_ID = "1Q1Ang4Uqv83ZHk25dVd26eWf16C8w5Ms"
 ZIP_FILE_ID = "1xHaKgAi26LOBu_9lDEpQwECzkslh_utH"  # ← Update this after uploading ZIP
 
 # === Local working paths ===
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(WORKING_DIR, "data")
-CSV_PATH = os.path.join(DATA_DIR, "cleaned_original_x_data.csv")
 ZIP_PATH = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted.zip")
 EXTRACTED_DIR = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted")
 
@@ -28,7 +26,6 @@ def download_file(file_id, output_path):
 os.makedirs(DATA_DIR, exist_ok=True)
 
 # === Download files if missing ===
-download_file(CSV_FILE_ID, CSV_PATH)
 download_file(ZIP_FILE_ID, ZIP_PATH)
 
 # === Unzip if needed ===
@@ -36,12 +33,6 @@ if not os.path.exists(EXTRACTED_DIR):
     print("📦 Extracting ZIP...")
     with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
         zip_ref.extractall(EXTRACTED_DIR)
-
-# === Load metadata ===
-meta_df = pd.read_csv(CSV_PATH)
-meta_df['DateTime'] = pd.to_datetime(meta_df['DateTime'], errors='coerce')
-meta_df['Date'] = meta_df['DateTime'].dt.date
-meta_df.dropna(subset=['DateTime'], inplace=True)
 
 # === Index document and label files ===
 doc_files, label_files = [], []
@@ -94,9 +85,10 @@ def update_graph(model, kval):
     df = pd.read_csv(index[pair]["doc"])
     labels_df = pd.read_csv(index[pair]["label"])
 
-    merged = pd.merge(df, meta_df[['original_text', 'DateTime', 'Date']],
-                      left_on='Document', right_on='original_text', how='left')
-    merged.dropna(subset=['Date'], inplace=True)
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce').dt.date
+    df.dropna(subset=['Date', 'Topic'], inplace=True)
+    merged = df.copy()
+
 
     grouped = merged.groupby(['Date', 'Topic']).size().reset_index(name='Count')
     totals = grouped.groupby('Date')['Count'].sum().reset_index(name='Total')
