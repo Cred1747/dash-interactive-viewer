@@ -12,7 +12,14 @@ ZIP_FILE_ID = "1xHaKgAi26LOBu_9lDEpQwECzkslh_utH"  # ← Update this after uploa
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(WORKING_DIR, "data")
 ZIP_PATH = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted.zip")
-EXTRACTED_DIR = os.path.join(DATA_DIR, "Bert_4.1Mini_Extracted")
+EXTRACTED_DIR = None
+for d in os.listdir(DATA_DIR):
+    if d.startswith("Bert_4.1Mini_Extracted"):
+        EXTRACTED_DIR = os.path.join(DATA_DIR, d)
+        break
+if not EXTRACTED_DIR or not os.path.exists(EXTRACTED_DIR):
+    raise FileNotFoundError("❌ Could not find extracted ZIP folder matching 'Bert_4.1Mini_Extracted*'")
+
 
 # === Download utility ===
 def download_file(file_id, output_path):
@@ -66,9 +73,9 @@ app.layout = html.Div([
     html.H2("Interactive Topic Proportions"),
     html.Div([
         html.Label("Model:"),
-        dcc.Dropdown(id='model', options=[{"label": m, "value": m} for m in models], value=models[0]),
+        dcc.Dropdown(id='model', options=[{"label": m, "value": m} for m in models], value=models[0] if models else None),
         html.Label("k-value:"),
-        dcc.Dropdown(id='kval', options=[{"label": k, "value": k} for k in kvals], value=kvals[0])
+        dcc.Dropdown(id='kval', options=[{"label": k, "value": k} for k in kvals], value=kvals[0] if kvals else None)
     ]),
     dcc.Graph(id='topic-graph')
 ])
