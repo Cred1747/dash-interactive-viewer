@@ -1,0 +1,6 @@
+# Ignore local-only or large files
+__pycache__/
+*.pyc
+*.ipynb
+data/
+.env
