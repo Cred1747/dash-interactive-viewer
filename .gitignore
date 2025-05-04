@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.log
+
+# Environments
+.venv/
+.env
+env/
+venv/
+
+# VSCode / Jupyter
+.vscode/
+.ipynb_checkpoints/
+
+# Render / Deployment
+render.yaml
+.renderignore
