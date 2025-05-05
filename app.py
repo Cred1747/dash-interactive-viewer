@@ -125,8 +125,8 @@ def update_graph(model, kval, clickData):
         labels={'Proportion': 'Topic Proportion'},
         barmode='stack',
         template='plotly_white',
-        color_discrete_sequence=extended_colors
-         text_auto='.2f'  # Optional: shows proportions as text
+        color_discrete_sequence=extended_colors,
+        text_auto='.2f'  # Optional: shows proportions as text
     )
     fig.add_trace(
     go.Scatter(
