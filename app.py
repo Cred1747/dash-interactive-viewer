@@ -125,31 +125,8 @@ def update_graph(model, kval, clickData):
         labels={'Proportion': 'Topic Proportion'},
         barmode='stack',
         template='plotly_white',
-        color_discrete_sequence=extended_colors,
-        text_auto='.2f'  # Optional: shows proportions as text
+        color_discrete_sequence=extended_colors
     )
-    fig.add_trace(
-    go.Scatter(
-        x=totals['Date'],
-        y=totals['Total'],
-        mode='lines+markers+text',
-        name='Total Tweets',
-        yaxis='y2',
-        text=totals['Total'],
-        textposition='top center',
-        line=dict(color='black', dash='dot')
-    )
-)
-
-fig.update_layout(
-    yaxis2=dict(
-        overlaying='y',
-        side='right',
-        title='Total Tweets',
-        showgrid=False
-    )
-)
-
     
 
     # === Extract clicked info and show tweets ===
