@@ -4,7 +4,7 @@ An interactive web app built with Dash and Plotly to explore Twitter topic model
 Designed by **Chris Reddish**, this tool visualizes topic proportions over time and lets users click to view the actual tweets for any topic-date combination.
 
 🌐 **Live App**:  
-👉 [https://dash-interactive-viewer.onrender.com](https://dash-interactive-viewer.onrender.com)
+👉 [https://dash-interactive-viewer.onrender.com](https://dash-interactive-viewer.onrender.com)  (Takes about 45 seconds to load if app is sleeping)
 
 ---
 
