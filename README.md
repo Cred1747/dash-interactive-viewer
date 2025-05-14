@@ -1,6 +1,10 @@
 # 🧠 BERTopic Tweet Explorer
 
-An interactive web app built with Dash and Plotly to explore Twitter topic modeling results using [BERTopic](https://maartengr.github.io/BERTopic/). Designed by **Chris Reddish**, this tool visualizes topic proportions over time and lets users click to view the actual tweets for any topic-date combination.
+An interactive web app built with Dash and Plotly to explore Twitter topic modeling results using [BERTopic](https://maartengr.github.io/BERTopic/).  
+Designed by **Chris Reddish**, this tool visualizes topic proportions over time and lets users click to view the actual tweets for any topic-date combination.
+
+🌐 **Live App**:  
+👉 [https://dash-interactive-viewer.onrender.com](https://dash-interactive-viewer.onrender.com)
 
 ---
 
