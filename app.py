@@ -42,10 +42,10 @@ for doc in doc_files:
         model = "UHC"
     elif "LM" in base:
         model = "LM"
-    elif "BT" in base:
-        model = "BT"
     elif "BTV3" in base:
         model = "BTV3"
+    elif "BT" in base:
+        model = "BT"
 
     # Extract k-value using regex
     k_search = re.search(r'k=(\d+)', base)
