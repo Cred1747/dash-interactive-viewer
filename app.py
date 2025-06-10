@@ -66,15 +66,27 @@ kvals = sorted(set(k[1] for k in index), key=int)
 app = Dash(__name__)
 app.layout = html.Div([
     html.H2("Interactive Topic Proportions"),
+
     html.Div([
         html.Label("Model:"),
         dcc.Dropdown(id='model', options=[{"label": m, "value": m} for m in models], value=models[0] if models else None),
         html.Label("k-value:"),
         dcc.Dropdown(id='kval', options=[{"label": k, "value": k} for k in kvals], value=kvals[0] if kvals else None)
     ]),
+    html.Div([
+        html.H4("Prime k values"),
+        html.Ul([
+            html.Li("BTV3 (Brian Thompson): Positive k = 8, Negative k = 6"),
+            html.Li("LM (Luigi Mangione): Positive k = 8, Negative k = 8"),
+            html.Li("UHC (United Health Care): Positive k = 8, Negative k = 7")
+        ])
+    ], style={"marginBottom": "20px", "marginTop": "10px"}),
+
     dcc.Graph(id='topic-graph'),
     html.H4("Tweets for Selected Topic & Date"),
     html.Div(id='tweet-output', style={"whiteSpace": "pre-wrap", "maxHeight": "400px", "overflowY": "scroll", "border": "1px solid #ccc", "padding": "10px"})
+])
+
 ])
 
 from dash.dependencies import Input, Output
