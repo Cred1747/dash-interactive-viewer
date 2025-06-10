@@ -78,7 +78,7 @@ app.layout = html.Div([
         html.Ul([
             html.Li("BTV3 (Brian Thompson): Positive k = 8, Negative k = 6"),
             html.Li("LM (Luigi Mangione): Positive k = 8, Negative k = 8"),
-            html.Li("UHC (United Health Care): Positive k = 8, Negative k = 7")
+            html.Li("UHC (United Health Care): Positive k = 6, Negative k = 7")
         ])
     ], style={"marginBottom": "20px", "marginTop": "10px"}),
 
