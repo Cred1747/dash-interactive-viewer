@@ -87,8 +87,6 @@ app.layout = html.Div([
     html.Div(id='tweet-output', style={"whiteSpace": "pre-wrap", "maxHeight": "400px", "overflowY": "scroll", "border": "1px solid #ccc", "padding": "10px"})
 ])
 
-])
-
 from dash.dependencies import Input, Output
 import itertools
 
